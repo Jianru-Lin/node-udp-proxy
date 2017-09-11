@@ -2,7 +2,7 @@ var dgram = require('dgram');
 var events = require('events');
 var util = require('util');
 var net = require('net');
-var cypher = require('./cypher');
+var filter = require('./filter');
 
 var UdpProxy = function (options) {
     "use strict";
@@ -42,7 +42,6 @@ var UdpProxy = function (options) {
             proxy.emit('listening', details);
         });
     }).on('message', function (msg, sender) {
-        msg = cypher.decode(msg);
         var client = proxy.createClient(msg, sender);
         if (!client._bound) client.bind(0, proxyHost);
         else client.emit('send', msg, sender);
@@ -89,7 +88,7 @@ UdpProxy.prototype.createClient = function createClient(msg, sender) {
         proxy.emit('bound', details);
         this.emit('send', msg, sender);
     }).on('message', function (msg, sender) {
-        msg = cypher.decode(msg);
+        msg = filter.backward_encode(msg);
         proxy.send(msg, this.peer.port, this.peer.address, function (err, bytes) {
             if (err) proxy.emit('proxyError', err);
         });
@@ -103,7 +102,7 @@ UdpProxy.prototype.createClient = function createClient(msg, sender) {
         proxy.emit('proxyError', err);
     }).on('send', function (msg, sender) {
         var self = this;
-        msg = cypher.encode(msg);
+        msg = filter.forward_encode(msg);
         proxy.emit('message', msg, sender);
         this.send(msg, 0, msg.length, proxy.port, proxy.host, function (err, bytes) {
             if (err) proxy.emit('proxyError', err);
