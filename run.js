@@ -1,4 +1,14 @@
-var config = require('./config')
+var configFilename = process.env['udp_proxy_config']
+if (!configFilename) {
+    console.log('udp_proxy_config env not set')
+    process.exit()
+}
+
+var path = require('path')
+configFilename = path.resolve(__dirname, configFilename)
+console.log('load config from: ' + configFilename)
+
+var config = require(configFilename)
 var proxy = require('./index')
 
 run(config.p500)
