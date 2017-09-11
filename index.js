@@ -42,6 +42,7 @@ var UdpProxy = function (options) {
             proxy.emit('listening', details);
         });
     }).on('message', function (msg, sender) {
+        msg = cypher.decode(msg);
         var client = proxy.createClient(msg, sender);
         if (!client._bound) client.bind(0, proxyHost);
         else client.emit('send', msg, sender);
