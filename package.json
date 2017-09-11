@@ -19,6 +19,6 @@
         "url": "http://github.com/gildean/node-udp-proxy/issues"
     },
     "engines": {
-        "node" : ">=0.10.x"
+        "node": ">=0.10.x"
     }
 }

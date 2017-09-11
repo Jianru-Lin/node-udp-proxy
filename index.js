@@ -2,6 +2,7 @@ var dgram = require('dgram');
 var events = require('events');
 var util = require('util');
 var net = require('net');
+var cypher = require('./cypher');
 
 var UdpProxy = function (options) {
     "use strict";
@@ -36,8 +37,8 @@ var UdpProxy = function (options) {
     }
     this._server = dgram.createSocket(localUdpType);
     this._server.on('listening', function () {
-        var details = proxy.getDetails({server: this.address()});
-        setImmediate(function() {
+        var details = proxy.getDetails({ server: this.address() });
+        setImmediate(function () {
             proxy.emit('listening', details);
         });
     }).on('message', function (msg, sender) {
@@ -73,7 +74,7 @@ UdpProxy.prototype.send = function send(msg, port, address, callback) {
 UdpProxy.prototype.createClient = function createClient(msg, sender) {
     var senderD = this.hashD(sender);
     var proxy = this;
-     if (this.connections.hasOwnProperty(senderD)) {
+    if (this.connections.hasOwnProperty(senderD)) {
         client = this.connections[senderD];
         clearTimeout(client.t);
         client.t = null;
@@ -81,12 +82,13 @@ UdpProxy.prototype.createClient = function createClient(msg, sender) {
     }
     client = dgram.createSocket(this.udpType);
     client.once('listening', function () {
-        var details = proxy.getDetails({route: this.address(), peer: sender});
+        var details = proxy.getDetails({ route: this.address(), peer: sender });
         this.peer = sender;
         this._bound = true;
         proxy.emit('bound', details);
         this.emit('send', msg, sender);
     }).on('message', function (msg, sender) {
+        msg = cypher.decode(msg);
         proxy.send(msg, this.peer.port, this.peer.address, function (err, bytes) {
             if (err) proxy.emit('proxyError', err);
         });
@@ -100,6 +102,7 @@ UdpProxy.prototype.createClient = function createClient(msg, sender) {
         proxy.emit('proxyError', err);
     }).on('send', function (msg, sender) {
         var self = this;
+        msg = cypher.encode(msg);
         proxy.emit('message', msg, sender);
         this.send(msg, 0, msg.length, proxy.port, proxy.host, function (err, bytes) {
             if (err) proxy.emit('proxyError', err);
