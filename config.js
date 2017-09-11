@@ -1,20 +1,26 @@
+const target = process.env['udp_proxy_target']
+if (!target) {
+    console.log('udp_proxy_target env not found.')
+    process.exit()
+}
+
 module.exports = {
     p500: {
-        address: '127.0.0.1',
-        port: 500,
+        address: target,
+        port: 34005,
         ipv6: false,
         localaddress: '0.0.0.0',
-        localport: 34005,
+        localport: 500,
         localipv6: false,
         proxyaddress: '::0',
         timeOutTime: 3600000
     },
     p4500: {
-        address: '127.0.0.1',
-        port: 4500,
+        address: target,
+        port: 34006,
         ipv6: false,
         localaddress: '0.0.0.0',
-        localport: 34006,
+        localport: 4500,
         localipv6: false,
         proxyaddress: '::0',
         timeOutTime: 3600000
