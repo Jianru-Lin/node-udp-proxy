@@ -6,7 +6,7 @@ module.exports = {
         localaddress: '0.0.0.0',
         localport: 34005,
         localipv6: false,
-        proxyaddress: '::0',
+        proxyaddress: undefined,
         timeOutTime: 3600000
     },
     p4500: {
@@ -16,7 +16,7 @@ module.exports = {
         localaddress: '0.0.0.0',
         localport: 34006,
         localipv6: false,
-        proxyaddress: '::0',
+        proxyaddress: undefined,
         timeOutTime: 3600000
     }
 }
