@@ -18,11 +18,11 @@ function run(options) {
     })
 
     server.on('message', function (message, sender) {
-        console.log('message from ' + sender.address + ':' + sender.port)
+        // console.log('message from ' + sender.address + ':' + sender.port)
     })
 
     server.on('proxyMsg', function (message, sender) {
-        console.log('answer from ' + sender.address + ':' + sender.port)
+        // console.log('answer from ' + sender.address + ':' + sender.port)
     })
 
     server.on('proxyClose', function (peer) {
