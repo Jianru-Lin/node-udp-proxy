@@ -3,6 +3,7 @@ var events = require('events');
 var util = require('util');
 var net = require('net');
 var filter = require('./filter');
+var enable_message_log = process.env['enable_message_log']
 
 var UdpProxy = function (options) {
     "use strict";
@@ -42,6 +43,7 @@ var UdpProxy = function (options) {
             proxy.emit('listening', details);
         });
     }).on('message', function (msg, sender) {
+        log_message(proxy, msg, sender);
         var client = proxy.createClient(msg, sender);
         if (!client._bound) client.bind(0, proxyHost);
         else client.emit('send', msg, sender);
@@ -88,6 +90,7 @@ UdpProxy.prototype.createClient = function createClient(msg, sender) {
         proxy.emit('bound', details);
         this.emit('send', msg, sender);
     }).on('message', function (msg, sender) {
+        log_message(client, msg, sender);
         msg = filter.backward_encode(msg);
         proxy.send(msg, this.peer.port, this.peer.address, function (err, bytes) {
             if (err) proxy.emit('proxyError', err);
@@ -118,3 +121,8 @@ UdpProxy.prototype.createClient = function createClient(msg, sender) {
 exports.createServer = function (options) {
     return new UdpProxy(options);
 };
+
+function log_message(socket, msg, sender) {
+    if (!enable_message_log) return
+    console.log(`[received:${socket.address().port}] ${msg.length}B from ${sender.address}:${sender.port}`)
+}
