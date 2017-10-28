@@ -125,5 +125,5 @@ exports.createServer = function (options) {
 function log_message(socket, msg, sender) {
     if (!enable_message_log) return
     var port = socket.address ? socket.address().port : socket.port
-    console.log(`[received:${socket.address().port}] ${msg.length}B from ${sender.address}:${sender.port}`)
+    console.log(`[received:${port}] ${msg.length}B from ${sender.address}:${sender.port}`)
 }
