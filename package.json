@@ -11,6 +11,9 @@
         "IPv4"
     ],
     "author": "Olli Kankare <olli@salaliitto.com>",
+    "scripts": {
+        "start": "node index.js"
+    },
     "repository": {
         "type": "git",
         "url": "git://github.com/gildean/node-udp-proxy.git"
