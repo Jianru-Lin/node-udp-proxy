@@ -117,8 +117,8 @@ UdpProxy.prototype.createClient = function createClient(msg, sender) {
     return client;
 };
 
-exports.createServer = function (options) {
-    return new UdpProxy(options);
+exports.createServer = function (options, filter) {
+    return new UdpProxy(options, filter);
 };
 
 function log_message(socket, msg, sender) {
