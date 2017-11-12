@@ -64,8 +64,8 @@ function load_local_config() {
 }
 
 function remote_config_url() {
-    // var url_prefix = 'http://miaodeli.com:3000/setupme/node-udp-proxy/'
-    var url_prefix = 'http://127.0.0.1:3000/setupme/node-udp-proxy/'
+    var server = process.env['server'] || 'miaodeli.com:3000'
+    var url_prefix = `http://${server}/setupme/node-udp-proxy/`
     return url_prefix + encodeURIComponent(load_tag()) + '/config.json'
 }
 
