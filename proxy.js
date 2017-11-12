@@ -18,6 +18,7 @@ var UdpProxy = function (options, filter) {
     this.host = options.address || 'localhost';
     this.port = options.port || 41234;
     this.connections = {};
+    this.filter = filter;
     if (options.ipv6) {
         this.udpType = 'udp6';
         this.family = 'IPv6';
@@ -75,6 +76,7 @@ UdpProxy.prototype.send = function send(msg, port, address, callback) {
 UdpProxy.prototype.createClient = function createClient(msg, sender) {
     var senderD = this.hashD(sender);
     var proxy = this;
+    var filter = this.filter;
     if (this.connections.hasOwnProperty(senderD)) {
         client = this.connections[senderD];
         clearTimeout(client.t);
