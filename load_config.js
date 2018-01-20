@@ -6,7 +6,7 @@ var path = require('path')
 module.exports = load_config
 
 function load_config(cb) {
-    cb = cb || function() {}
+    cb = cb || function () { }
     console.log('try loading local config: ' + local_config_filename())
     var config = load_local_config()
     if (config) {
@@ -30,9 +30,14 @@ function load_config(cb) {
 }
 
 function load_remote_config(cb) {
-    cb = cb || function () {}
+    cb = cb || function () { }
     var url = remote_config_url()
-    request.get({url: url, json: true}, function(err, res, body) {
+    var body = {
+        selector: {
+            name: load_tag()
+        }
+    }
+    request.post({ url: url, body: body, json: true }, function (err, res, body) {
         if (err) {
             console.error(err)
             cb(err.toString())
@@ -50,7 +55,21 @@ function load_remote_config(cb) {
             body = JSON.parse(body)
         }
 
-        cb(null, body)
+        if (!Array.isArray(body.docs)) {
+            var err_str = 'fields "docs" is not array: ' + JSON.stringify(body)
+            console.error(err_str)
+            cb(err_str)
+            return
+        }
+
+        if (!body.docs.length) {
+            var err_str = 'fields "docs" is empty array: ' + JSON.stringify(body)
+            console.error(err_str)
+            cb(err_str)
+            return
+        }
+
+        cb(null, body.docs[0])
     })
 }
 
@@ -64,9 +83,7 @@ function load_local_config() {
 }
 
 function remote_config_url() {
-    var server = process.env['server'] || 'miaodeli.com:3000'
-    var url_prefix = `http://${server}/setupme/node-udp-proxy/`
-    return url_prefix + encodeURIComponent(load_tag()) + '/config.json'
+    return 'http://couchdb.miaodeli.com/node-udp-proxy/_find'
 }
 
 function local_config_filename() {
