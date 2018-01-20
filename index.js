@@ -2,13 +2,14 @@ var load_config = require('./load_config')
 var proxy = require('./proxy')
 var gen_filter = require('./gen_filter')
 
-load_config(function(err, config) {
+load_config(function (err, config) {
     if (err) {
         process.exit()
         return
     }
 
     for (var k in config) {
+        if (!/^p/.test(k)) continue
         var tunnel = config[k]
         console.log(`[${tunnel.mode}] from ${tunnel.localaddress}[${tunnel.localport}] to ${tunnel.address}[${tunnel.port}]`)
     }
